@@ -1,8 +1,6 @@
 package gui.sinogramas.home;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +12,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,14 +20,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.util.LinkedList;
 
 import data.sinogramas.MaxHeap;
 import data.sinogramas.QueueDynamicArrayGeneric;
 import data.sinogramas.Unihan;
 import gui.sinogramas.ListAdapter;
-import gui.sinogramas.MenuPrincipalActivity;
 import gui.sinogramas.R;
 import logic.sinogramas.Archive;
 import logic.sinogramas.DataStorage;
@@ -51,7 +46,7 @@ public class HomeFragment extends Fragment {
 
     public Archive controller;
     public MaxHeap searchByPattern;
-    public QueueDynamicArrayGeneric<Unihan> sinogramsQueue;
+    private LinkedList<Unihan> favoriteSinogramList;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
@@ -64,7 +59,7 @@ public class HomeFragment extends Fragment {
         numOfStrokesEditText = root.findViewById(R.id.numOfStrokesEditText);
         radixEditText = root.findViewById(R.id.radixEditText);
 
-        sinogramsQueue = new QueueDynamicArrayGeneric<>();
+        favoriteSinogramList = new LinkedList<>();
         startUp();
 
         recyclerSinograms = root.findViewById(R.id.recycler_favorites);
@@ -77,14 +72,14 @@ public class HomeFragment extends Fragment {
                 textView.setText(s);
             }
         });
-
-
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DataStorage saveFavorites = new DataStorage(root.getContext(), sinogramsQueue);
-                if (saveFavorites.store()) Toast.makeText(root.getContext(), "YEY", Toast.LENGTH_LONG).show();
-                else addButton.setText("Gonorrea");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    DataStorage saveFavorites = new DataStorage(root.getContext(), favoriteSinogramList);
+                    if (saveFavorites.store()) Toast.makeText(root.getContext(), "YEY", Toast.LENGTH_LONG).show();
+                    else addButton.setText("Gonorrea");
+                }
             }
         });
 
@@ -106,15 +101,15 @@ public class HomeFragment extends Fragment {
                 }
 
                 if (!expression.equals("")) {
-                    sinogramsQueue.enqueue(controller.searchByChar(expression.charAt(0),'g'));
+                    favoriteSinogramList.offer(controller.searchByChar(expression.charAt(0),'g'));
                 } else if (radix>0 && radix<215) {
-                    sinogramsQueue = controller.filterByRadixes(radix,'g');
+                    favoriteSinogramList = controller.filterByRadixes(radix,'g');
                 } else if (numOfStrokes>0 && numOfStrokes<59) {
-                    sinogramsQueue = controller.filterByStrokes(numOfStrokes, 'g');
+                    favoriteSinogramList = controller.filterByStrokes(numOfStrokes, 'g');
                 }
 
-                if (sinogramsQueue!=null) {
-                    ListAdapter adapter = new ListAdapter(sinogramsQueue,getContext());
+                if (favoriteSinogramList!=null) {
+                    ListAdapter adapter = new ListAdapter(favoriteSinogramList,getContext());
                     recyclerSinograms.setAdapter(adapter);
                 }
             }

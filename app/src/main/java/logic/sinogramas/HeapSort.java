@@ -10,6 +10,7 @@ package logic.sinogramas;
  * @author dequi
  */
 public class HeapSort<T extends Comparable<T>> {
+
     private void swapElements(T[] a, int i, int j) {
         T temp;
         temp = a[i];

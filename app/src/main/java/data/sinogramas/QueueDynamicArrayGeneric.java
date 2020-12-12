@@ -1,19 +1,15 @@
-/**
- * Undocumentated methods are descripted in the interface this class implements.
- */
 package data.sinogramas;
 
+import java.util.LinkedList;
+
 /**
- * This class is a "fixed" version of the QueueArray seen in the data structures class 
- * @author Cristian Davil Camilo Santos Gil
- * @author Diego Esteban Quintero Rey
- * @author Kevin Jair Gonzalez Sanchez
- * @author Stiven Leonardo Sánchez León 
+ * This class is a hybrid between a dynamic queue and a stack.
+ * @author dequi
+ * @author small-nightingale
  * @version 2.0
  * @since 08/09/2020
  */
-
-public class QueueDynamicArrayGeneric<T> implements QueueGeneric<T> {
+public class QueueDynamicArrayGeneric<T>{
     private int front;
     private int rear;
     private int count;  //This keeps tracks of the elements of the array
@@ -21,30 +17,37 @@ public class QueueDynamicArrayGeneric<T> implements QueueGeneric<T> {
     private T[] queueArray;
 
     /**
-     * Class constructor
+     * Class constructor, the initial values starts at 0 and the array with a size of 16
+     * The size of the array doubles if needed.
      */
     public QueueDynamicArrayGeneric() {
         front = rear = count =0;
         queueArray = (T[]) new Object[16];
         this.size = queueArray.length;
     }
-    
-    @Override
+
+    /**
+     * Checks whether queue has no elements
+     * @return true if the queue is empty, false otherwise
+     */
     public boolean empty() {
         return count <=0;
     }
-
-    @Override
+    /**
+     * Checks whether queue has any elements
+     * @return true if the queue is full, false otherwise
+     */
     public boolean full() {
         return count>=this.size;
     }
 
-    @Override
+    /**
+     * Takes the front element of the queue, removes it.
+     * @return the element removed
+     */
     public T dequeue() {
         T item = null;
-        if(this.empty()) {
-            throw new RuntimeException("Queue is empty");
-        } else {
+        if(!this.empty()) {
             item = queueArray[front];
             front++;
             count--;
@@ -52,7 +55,11 @@ public class QueueDynamicArrayGeneric<T> implements QueueGeneric<T> {
         return item;
     }
 
-    @Override
+    /**
+     * Inserts an element at the end of the queue
+     * If the queue is full, the size of it will double
+     * @param item: element to insert
+     */
     public void enqueue(T item) {
         if (this.rear == this.size) {
             T[] newArray = (T[]) new Comparable[2 * this.size];
@@ -68,11 +75,11 @@ public class QueueDynamicArrayGeneric<T> implements QueueGeneric<T> {
     }
 
     /**
-     * This method give the position of the counter
-     * @return count: counter; 
+     * Gives the length of the queue; a.k.a. position of the last element added
+     * @return count: Length;
      */
-    public int getCount() {
-        return count;
+    public int length() {
+        return this.count;
     }
  
     @Override
@@ -95,11 +102,11 @@ public class QueueDynamicArrayGeneric<T> implements QueueGeneric<T> {
         return toPrint.toString();
     }
 
-    @Override
-    public int length() {
-        return this.count;
-    }
-
+    /**
+     * Peeks and gets the element at the given position
+     * @param position: position to check
+     * @return Element at the given position
+     */
     public T getItem(int position) {
         return this.queueArray[position];
     }

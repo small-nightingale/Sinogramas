@@ -10,6 +10,14 @@ Ubicándose en a `app/src/main/`, sin embargo, se tiene el núcleo del proyecto:
 - `res`: el directorio que contiene los recursos de la aplicacion, e.g., cadenas, colores, logo.
 - `java`: el directorio que contiene el código de Java: data con las estructuras, logic con el main, y gui con la interfaz.
 
+## Java
+
+Dentro de Java, se encuentra el código que hace funcional la aplicación. Se utiliza una visión orientada a objetos. Hay tres directorios:
+
+- `data.sinogramas`: Directorio que contiene los datos (estructuras, caracteres) de la aplicación.
+- `gui.sinogramas`: Directorio que contiene la interfaz gráfica de la aplicación.
+- `logic.sinogramas`: Directorio que contiene las clases que conenctan la aplicación y se encarga de la lógica como tal.
+
 ## Wiki
 
 //TODO

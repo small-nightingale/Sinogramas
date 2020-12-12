@@ -1,28 +1,37 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package data.sinogramas;
-
 import logic.sinogramas.HeapSort;
-
 /**
- *
  * @author dequi
  */
 public class HeapArray<T extends Comparable<T>> {
     private T[] array;
     private int size;
-    public HeapArray(int cap) {
-        this.array = (T[]) new Comparable[cap];
-        size = 0;
+
+    /**
+     * Class constructor
+     * @param size: size of array
+     */
+    public HeapArray(int size) {
+        this.array = (T[]) new Comparable[size];
+        this.size = 0;
     }
-    public void insertItem(T x) {
-        array[size] = x;
+
+    /**
+     * Inserts a given item
+     * @param item
+     */
+    public void insertItem(T item) {
+        array[size] = item;
         moveUp();
         size++;
     }
+    public T removeMin() {
+        T min=array[0];
+        array[0]=array[--size];
+        moveDown();
+        return min;
+    }
+
     private void moveUp() {
         int child = size;
         int parent = (child-1)/2;
@@ -33,12 +42,6 @@ public class HeapArray<T extends Comparable<T>> {
             parent = (child-1)/2;
         }
         array[child]=temp;
-    }
-    public T removeMin() {
-        T min=array[0];
-        array[0]=array[--size];
-        moveDown();
-        return min;
     }
     private void moveDown() {
         boolean flag = false;
@@ -60,9 +63,9 @@ public class HeapArray<T extends Comparable<T>> {
         }
         array[parent] = temp;
     }
-    
+
     public void sort() {
         HeapSort<T> hS = new HeapSort<>();
-        hS.heapSort(array, size);
+        hS.heapSort(this.array, this.size);
     }
 }

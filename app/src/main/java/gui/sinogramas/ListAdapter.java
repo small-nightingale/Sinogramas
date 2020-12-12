@@ -9,36 +9,38 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import data.sinogramas.QueueDynamicArrayGeneric;
+import java.util.LinkedList;
 import data.sinogramas.Unihan;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
-    private QueueDynamicArrayGeneric<Unihan> allData;
     private LayoutInflater mInflater;
+    private LinkedList<Unihan> unihanList;
     private Context context;
 
-    public ListAdapter(QueueDynamicArrayGeneric<Unihan> itemList, Context context) {
+    public ListAdapter(LinkedList<Unihan> unihanList, Context context) {
         this.mInflater = LayoutInflater.from(context);
         this.context = context;
-        this.allData = itemList;
+        this.unihanList = unihanList;
     }
 
     @Override
-    public int getItemCount() { return allData.length(); }
-
+    public int getItemCount() {
+        return unihanList.size();
+    }
     @NonNull
     @Override
     public ListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.recycler_sinogram_element, null);
         return new ViewHolder(view);
     }
-
     @Override
     public void onBindViewHolder(final ListAdapter.ViewHolder holder, final int position) {
-        holder.bindData(allData.getItem(position));
+        holder.bindData(unihanList.get(position));
     }
 
-    public void setItems(QueueDynamicArrayGeneric<Unihan> items) {allData = items;}
+    public void setItems(LinkedList<Unihan> unihanList) {
+        this.unihanList = unihanList;
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView sinogram, radical, meaning, pronunciation, strokes;

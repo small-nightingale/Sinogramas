@@ -1,24 +1,43 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Undocumented methods are getters and setters
  */
 package data.sinogramas;
-
-import java.util.Comparator;
-
+import java.util.LinkedList;
 /**
- *
  * @author dequi
  */
 public class BSTRefGeneric<T extends Comparable<T>> {
+    private LinkedList<T> list;
     private NodeGeneric<T> root;
+    QueueDynamicArrayGeneric queue = new QueueDynamicArrayGeneric<T>();
+
+    /**
+     * Class constructor
+     */
     public BSTRefGeneric() {
-        root = null;
+        this.list = new LinkedList<>();
+        this.root = null;
     }
-    public void insertBST(T data) {
-        root = insert(data, root);
+
+    public LinkedList<T> getList() {
+        return this.list;
     }
+    public void setList(LinkedList<T> list) {
+        this.list = list;
+    }
+    public NodeGeneric<T> getRoot() {
+        return this.root;
+    }
+    public void setRoot(NodeGeneric<T> root) {
+        this.root = root;
+    }
+    public QueueDynamicArrayGeneric getQueue() {
+        return this.queue;
+    }
+    public void setQueue(QueueDynamicArrayGeneric queue) {
+        this.queue = queue;
+    }
+
     private NodeGeneric<T> insert(T data, NodeGeneric<T> p) {
         if(p == null)
             p = new NodeGeneric<>(data);
@@ -34,11 +53,10 @@ public class BSTRefGeneric<T extends Comparable<T>> {
                 }
         return p;
     }
-    
-    
-    public void removeBST(T data){
-        root = remove(data, root);
+    public void insert(T data) {
+        this.root = insert(data, this.root);
     }
+
     private NodeGeneric<T> remove(T data, NodeGeneric<T> p){
         if(p != null)
             if(p.getData().compareTo(data) > 0)
@@ -64,6 +82,10 @@ public class BSTRefGeneric<T extends Comparable<T>> {
             System.out.println("Item not in tree and not removed");
         return p;
     }
+    public void remove(T data){
+        this.root = remove(data, this.root);
+    }
+
     private NodeGeneric<T> findMin(NodeGeneric<T> p) {
         if(p != null)
             while(p.getPrev() != null)
@@ -96,47 +118,29 @@ public class BSTRefGeneric<T extends Comparable<T>> {
             contains(p.getPrev(), data);
         return false;
     }
-    
-    
-    public void levelOrder(NodeGeneric root){
-      //Write your code here
-      QueueDynamicArrayGeneric<NodeGeneric> queue = new QueueDynamicArrayGeneric<>(); 
-      if (root != null) {
-        queue.enqueue(root);
-        while (!queue.empty()) {
-            NodeGeneric t = queue.dequeue();
-            System.out.print(t.getData() + " ");
-            if(t.getPrev() != null) {
-                queue.enqueue(t.getPrev());
-            }
-            if(t.getNext() != null) {
-                queue.enqueue(t.getNext());
+
+    public void levelOrder(NodeGeneric<T> root) {
+        LinkedList<NodeGeneric<T>> listOrder = new LinkedList<>();
+        if (root!=null) {
+            listOrder.offer(root);
+            while(list.size()>0) {
+                NodeGeneric<T> node = listOrder.poll();
+                System.out.println(node.getData()+" ");
+                if(node.getPrev() != null) listOrder.offer(node.getPrev());
+                if(node.getNext() != null) listOrder.offer(node.getNext());
             }
         }
-      }
     }
-    
-    
-    QueueDynamicArrayGeneric queue = new QueueDynamicArrayGeneric<T>();
-    
-    public QueueDynamicArrayGeneric<T> inOrderToQueue(NodeGeneric<T> node) 
-    { 
-        if (node == null) 
-            return queue; 
-  
-        /* first recur on left child */
-        inOrderToQueue(node.getPrev()); 
-  
-        /* then enqueue the data of node */
-        queue.enqueue(node.getData()); 
-  
-        /* now recur on right child */
-        inOrderToQueue(node.getNext()); 
-        
-        return queue;
-    } 
-    
-    public NodeGeneric<T> getRoot() {
-        return this.root;
+
+    public LinkedList<T> inOrderToQueue(NodeGeneric<T> node) {
+        if (node == null) return this.list;
+
+        inOrderToQueue(node.getPrev()); /* first recur on left child */
+        this.list.offer(node.getData()); /* then enqueue the data of node */
+        inOrderToQueue(node.getNext()); /* now recur on right child */
+
+        return this.list;
     }
+
+
 }

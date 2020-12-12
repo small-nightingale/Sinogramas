@@ -227,27 +227,26 @@ public class Unihan implements Comparable<Unihan>{
     }
 
     public String print() {
-        String englishDefinitionsToString="";
-        String pictureLinksToString="";
-        String spanishDefinitionsToString="";
-        for(String english: englishDefinitions) {
-            englishDefinitionsToString+=english+"-";
-        }
-        for(String spanish: spanishDefinitions) {
-            spanishDefinitionsToString+=spanish+"-";
-        }
-        for(String pictures: pictureLinks) {
-            pictureLinksToString+=pictures+"-";
-        }
+        String englishDefinitionsToString="[";
+        String pictureLinksToString="[";
+        String spanishDefinitionsToString="[";
+
+        for(String english: englishDefinitions) englishDefinitionsToString+=english+",";
+        englishDefinitionsToString+="]";
+
+        for(String spanish: spanishDefinitions) spanishDefinitionsToString+=spanish;
+        spanishDefinitionsToString+="]";
+
+        for(String pictures: pictureLinks) pictureLinksToString+=pictures;
+        pictureLinksToString+="]";
+
         return numOfStrokes+":"+codePoint+":"+mp3file+":"+pinyin+":"+radix+":"+englishDefinitionsToString+":"+pictureLinksToString+":"+spanishDefinitionsToString;
     }
-
 
     @Override
     public String toString() {
         return String.valueOf(this.character);
     }
-
     @Override
     public int compareTo(Unihan otherCharacter) {
         int toReturn;

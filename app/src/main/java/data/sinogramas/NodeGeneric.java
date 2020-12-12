@@ -4,11 +4,9 @@
 package data.sinogramas;
 
 /**
- * This class is a "fixed" version of the Node class seen in the data structures class
- * @author Cristian Davil Camilo Santos Gil
- * @author Diego Esteban Quintero Rey
- * @author Kevin Jair Gonzalez Sanchez
- * @author Stiven Leonardo Sánchez León
+ * This class is our own implementation of Nodes so we can handle structures with references
+ * @author dequi
+ * @author small-nightingale
  * @version 2.0
  * @since 15/09/2020
  */
@@ -25,48 +23,30 @@ public class NodeGeneric<T> {
      */
     public NodeGeneric(T data) {
         this.data = data;
-        height = 1; // Debe ser 1 para que funcione con nuestro AVL
-    }
-
-    /**
-     * Constructor, calls the other constructor with the data being null;
-     */
-    public NodeGeneric() {
-        this(null);
-    }
-
-    NodeGeneric(int num) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        height = 1; //Initial height
     }
 
     public T getData() {
         return this.data;
     }
-
     public void setData(T data) {
         this.data = data;
     }
-
     public NodeGeneric<T> getNext() {
         return this.next;
     }
-
     public void setNext(NodeGeneric<T> next) {
         this.next = next;
     }
-
     public NodeGeneric<T> getPrev() {
         return this.prev;
     }
-
     public void setPrev(NodeGeneric<T> prev) {
         this.prev = prev;
     }
-    
     public int getHeight() {
         return this.height;
     }
-    
     public void setHeight(int h) {
         this.height = h;
     }
@@ -87,5 +67,4 @@ public class NodeGeneric<T> {
         toPrint.append("]");
         return toPrint.toString();
     }
-
 }

@@ -1,5 +1,4 @@
 package gui.sinogramas.gallery;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,13 +21,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.LinkedList;
 
-import data.sinogramas.QueueDynamicArrayGeneric;
 import data.sinogramas.Unihan;
 import gui.sinogramas.ListAdapter;
-
-import gui.sinogramas.*;
+import gui.sinogramas.R;
 import logic.sinogramas.DataStorage;
+
+/**
+ * @author kegonzalezs
+ * @author small-nightingale
+ */
 
 public class GalleryFragment extends Fragment {
 
@@ -40,7 +43,8 @@ public class GalleryFragment extends Fragment {
 
     private GalleryViewModel galleryViewModel;
     private RecyclerView recyclerFavorites;
-    QueueDynamicArrayGeneric<Unihan> favoriteQueue;
+
+    private LinkedList<Unihan> sinogramsFavoriteList;
     DataStorage myfavorites;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,10 +52,11 @@ public class GalleryFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_gallery, container, false);
         final TextView textView = root.findViewById(R.id.text_gallery);
 
-        favoriteQueue = new QueueDynamicArrayGeneric<>();
-        myfavorites = new DataStorage(root.getContext(), favoriteQueue);
-        if (myfavorites.retreive()) {
-            favoriteQueue = myfavorites.getSinogramQueue();
+        sinogramsFavoriteList = new LinkedList<>();
+
+        myfavorites = new DataStorage(root.getContext(), sinogramsFavoriteList);
+        if (myfavorites.retrieve()) {
+            sinogramsFavoriteList = myfavorites.getSinograms();
         }
 
         searchButton = root.findViewById(R.id.searchSinogramButton);
@@ -64,7 +69,7 @@ public class GalleryFragment extends Fragment {
         recyclerFavorites.setLayoutManager(new LinearLayoutManager(getContext()));
 
         //fillListCSV();
-        ListAdapter adapter = new ListAdapter(favoriteQueue,getContext());
+        ListAdapter adapter = new ListAdapter(sinogramsFavoriteList,getContext());
 
         recyclerFavorites.setAdapter(adapter);
         galleryViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
@@ -76,12 +81,7 @@ public class GalleryFragment extends Fragment {
         return root;
     }
 
-    private void start() {
-
-    }
-
     private void fillListCSV() {
-
         InputStream is = getResources().openRawResource(R.raw.sinograms_list);
         BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
         String line = "";
@@ -89,7 +89,7 @@ public class GalleryFragment extends Fragment {
                 while( (line = reader.readLine()) != null) {
                     String[] tokens = line.split(";");
                     Unihan thisChar = new Unihan(tokens[0],tokens[1],tokens[2],tokens[3],tokens[4]);
-                    favoriteQueue.enqueue(thisChar);
+                    sinogramsFavoriteList.offer(thisChar);
                 }
             } catch (IOException e) {
                 Log.wtf("MyActivity", "Error reading data file on line"+line,e);

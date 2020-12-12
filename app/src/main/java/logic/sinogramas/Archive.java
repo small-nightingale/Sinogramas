@@ -2,14 +2,12 @@
  * Undocumented methods are getters and setters
  */
 package logic.sinogramas;
-
+import java.util.LinkedList;
 /**
  * This class is meant to manage the data within the data structures.
- * @author Cristian Davil Camilo Santos Gil
- * @author Diego Esteban Quintero Rey
- * @author Kevin Jair Gonzalez Sanchez
- * @author Stiven Leonardo Sánchez León 
- * @version 7.0
+ * @author dequi
+ * @author small-nightingale
+ * @version 8.0
  * @since 16/10/2020
  */
 
@@ -20,7 +18,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.io.FileNotFoundException;
 
 import data.sinogramas.*;
 import static java.lang.Float.parseFloat;
@@ -229,9 +226,7 @@ public class Archive {
             return emptyChar;
         }
     }
-    
-    
-    
+
     // Funciona correctamente siempre que se lean los arcchivos individualmente (no el mergedFile)
     // No se deben leer las páginas 163 y 164 pues generan problemas
     public void parseText() {
@@ -242,13 +237,13 @@ public class Archive {
         if (strokesList[thisChar.getNumOfStrokes()] == 0) {
             BSTRefGeneric<Unihan> tempBST = new BSTRefGeneric<>();
             bstStrokesArray[thisChar.getNumOfStrokes()] = tempBST;
-            bstStrokesArray[thisChar.getNumOfStrokes()].insertBST(thisChar);
+            bstStrokesArray[thisChar.getNumOfStrokes()].insert(thisChar);
         } else {
             if (bstStrokesArray[thisChar.getNumOfStrokes()] == null) {
                 BSTRefGeneric<Unihan> tempBST = new BSTRefGeneric<>();
                 bstStrokesArray[thisChar.getNumOfStrokes()] = tempBST;
             }
-            bstStrokesArray[thisChar.getNumOfStrokes()].insertBST(thisChar);
+            bstStrokesArray[thisChar.getNumOfStrokes()].insert(thisChar);
         }
         // Maneja los casos en los que hay comillas en el radical
         try {
@@ -273,7 +268,7 @@ public class Archive {
                 BSTRefGeneric<Unihan> tempBST = new BSTRefGeneric<>();
                 bstRadixesArray[intRadix] = tempBST;
             }
-            bstRadixesArray[intRadix].insertBST(thisChar);
+            bstRadixesArray[intRadix].insert(thisChar);
         } 
         tempAVL.setRoot(tempAVL.insert(tempAVL.getRoot(), thisChar));
         for (int i = 0; i < thisChar.getSpanishDefinitions().length; i++) {
@@ -292,13 +287,13 @@ public class Archive {
             if (strokesList[currentChar.getNumOfStrokes()] == 0) {
                 tempBST = new BSTRefGeneric<>();
                 bstStrokesArray[currentChar.getNumOfStrokes()] = tempBST;
-                bstStrokesArray[currentChar.getNumOfStrokes()].insertBST(currentChar);
+                bstStrokesArray[currentChar.getNumOfStrokes()].insert(currentChar);
             } else {
                 if (bstStrokesArray[currentChar.getNumOfStrokes()] == null) {
                     BSTRefGeneric<Unihan> tempBST = new BSTRefGeneric<>();
                     bstStrokesArray[currentChar.getNumOfStrokes()] = tempBST;
                 }
-                bstStrokesArray[currentChar.getNumOfStrokes()].insertBST(currentChar);
+                bstStrokesArray[currentChar.getNumOfStrokes()].insert(currentChar);
             }
             // Maneja los casos en los que hay comillas en el radical
             try {
@@ -318,7 +313,7 @@ public class Archive {
                     BSTRefGeneric<Unihan> tempBST = new BSTRefGeneric<>();
                     bstRadixesArray[intRadix] = tempBST;
                 }
-                bstRadixesArray[intRadix].insertBST(currentChar);
+                bstRadixesArray[intRadix].insert(currentChar);
             } 
             tempAVL.setRoot(tempAVL.insert(tempAVL.getRoot(), currentChar));
             for (int i = 0; i < currentChar.getSpanishDefinitions().length; i++) {
@@ -330,11 +325,13 @@ public class Archive {
             
         }
     }
-    
-    // Búsqueda por caracter directamente
-    // Nota: Se requeriría agregar una celda adicional a la app
-    // La primera para buscar por caracter (searchByChar)
-    // La segunda para buscar por patrón en español (searchPattern)
+
+    /**
+     * Searches a given char
+     * @param c: char to search for
+     * @param selector: 'g' for the general part, 'f' for favorite part
+     * @return
+     */
     public Unihan searchByChar(char c, char selector) {
         NodeGeneric<Unihan> n = null;
         if (selector == 'g') { // g de general
@@ -346,21 +343,17 @@ public class Archive {
     }
     
     // Retorna una cola con los caracteres del árbol BST que corresponde a número de trazos s
-    public QueueDynamicArrayGeneric<Unihan> filterByStrokes(int s, char selector) {
-        if (selector == 'g')
-            tempBST = this.bstStrokesArray[s];
-        else if (selector == 'f')
-            tempBST = this.favBSTStrokesArray[s];
+    public LinkedList<Unihan> filterByStrokes(int s, char selector) {
+        if (selector == 'g') tempBST = this.bstStrokesArray[s];
+        else if (selector == 'f') tempBST = this.favBSTStrokesArray[s];
         if (tempBST!=null) return tempBST.inOrderToQueue(tempBST.getRoot());
         else return null;
     }
     
     // Retorna una cola con los caracteres del árbol BST que corresponde al radical r
-    public QueueDynamicArrayGeneric<Unihan> filterByRadixes(int r, char selector) {
-        if (selector == 'g')
-            tempBST = this.bstRadixesArray[r];
-        else if (selector == 'f')
-            tempBST = this.favBSTRadixesArray[r];
+    public LinkedList<Unihan> filterByRadixes(int r, char selector) {
+        if (selector == 'g') tempBST = this.bstRadixesArray[r];
+        else if (selector == 'f') tempBST = this.favBSTRadixesArray[r];
         if (tempBST!= null) return tempBST.inOrderToQueue(tempBST.getRoot());
         else return null;
     }
@@ -380,7 +373,7 @@ public class Archive {
                 BSTRefGeneric<Unihan> tempBST = new BSTRefGeneric<>();
                 favBSTStrokesArray[u.getNumOfStrokes()] = tempBST;
             }
-            favBSTStrokesArray[u.getNumOfStrokes()].insertBST(u);
+            favBSTStrokesArray[u.getNumOfStrokes()].insert(u);
         }
         intRadix = (int) Math.floor(parseFloat(u.getRadix()));
         this.favRadixesList[intRadix] = intRadix;
@@ -392,7 +385,7 @@ public class Archive {
                 BSTRefGeneric<Unihan> tempBST = new BSTRefGeneric<>();
                 favBSTRadixesArray[intRadix] = tempBST;
             }
-            bstRadixesArray[intRadix].insertBST(u);
+            bstRadixesArray[intRadix].insert(u);
         } 
     }
     
